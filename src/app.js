@@ -5,10 +5,25 @@ import userRouter from "./Routes/user.Routes.js";
 const app = express()
 
 
-app.use(cors({
-  origin: 'http://localhost:3000', // Allow only this origin
-  credentials: true                // Allow cookies & credentials
-}));
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://full-stack-website-theta.vercel.app"
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true
+  })
+);
 
   
 app.use(express.json({limit:"16kb"}))
